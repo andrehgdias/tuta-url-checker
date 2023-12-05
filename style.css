@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.invalid {
+  border-left-color: theme('colors.tuta-red');
+}
+
+.valid {
+  border-left-color: theme('colors.tuta-green');
+}
+
+.loading {
+  border-left: 4px solid #fff !important;
+  animation: pulse-white 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-white {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

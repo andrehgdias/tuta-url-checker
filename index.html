@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/style.css">
+  <title>Tuta Url Checker App</title>
+</head>
+
+<body>
+  <div class="min-h-screen flex justify-center items-center bg-tuta-gray-200">
+    <div class="w-1/2">
+      <h1 class="text-center my-4 text-2xl text-white">Tuta Url Checker</h1>
+      <input
+        class="w-full p-1 outline-0 outline-transparent rounded-md bg-tuta-gray-100 text-white placeholder:text-gray-500 focus:bg-tuta-black invalid:outline-red-500 transition-all"
+        type="url" name="url-input" id="url-input" placeholder="https://tuta.com"
+        pattern="https?:\/\/(www\.)?([^.]+\.)?[a-zA-Z0-9\-_]+\.[a-zA-Z0-9]+(\/[^\s]*)?" required>
+      <div class="my-4 p-4 relative rounded-md border-4 border-transparent text-white" id="result"></div>
+    </div>
+  </div>
+  <script type="module" src="/main.js"></script>
+</body>
+
+</html>
