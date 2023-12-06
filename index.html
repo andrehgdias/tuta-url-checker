@@ -17,7 +17,10 @@
         class="w-full p-1 outline-0 outline-transparent rounded-md bg-tuta-gray-100 text-white placeholder:text-gray-500 focus:bg-tuta-black invalid:outline-red-500 transition-all"
         type="url" name="url-input" id="url-input" placeholder="https://tuta.com"
         pattern="https?:\/\/(www\.)?([^.]+\.)?[a-zA-Z0-9\-_]+\.[a-zA-Z0-9]+(\/[^\s]*)?" required>
-      <div class="my-4 p-4 relative rounded-md border-4 border-transparent text-white" id="result"></div>
+      <div class="my-4 p-4 relative rounded-md border-4 border-transparent text-white" id="result">
+        <h1 id="title" class="block first-letter:uppercase text-xl mb-2"></h1>
+        <p id="body" class="block first-letter:uppercase"></p>
+      </div>
     </div>
   </div>
   <script type="module" src="/main.js"></script>
