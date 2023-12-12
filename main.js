@@ -2,8 +2,8 @@ function debouncePromise(callBack, delay = 1000) {
   let timeoutRef;
 
   return (...args) => {
+    console.log(args);
     clearTimeout(timeoutRef);
-
     return new Promise((resolve) => {
       timeoutRef = setTimeout(async () => {
         const result = await callBack(...args);
@@ -37,47 +37,74 @@ function checkUrl(url) {
   return response;
 }
 
-const setResult = (result) => {
+function mockServerRequest(url) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const response = checkUrl(url);
+      resolve(response);
+    }, 2500);
+  });
+}
+
+const setAppStatus = (result) => {
   const { status, data } = result;
   const { urlExists, returnType, reason } = data;
 
   const title = document.getElementById('title');
   const body = document.getElementById('body');
 
-  if (status === 'fail') {
-    resultSection.classList.remove('valid');
-    resultSection.classList.add('invalid');
-    title.innerText = status;
-    body.innerText = reason;
-    return;
+  switch (status) {
+    case 'loading':
+      resultSection.classList.remove('valid');
+      resultSection.classList.remove('invalid');
+      resultSection.classList.add('loading');
+      title.innerText = status;
+      body.innerText = '';
+      break;
+    case 'fail':
+      resultSection.classList.remove('valid');
+      resultSection.classList.add('invalid');
+      title.innerText = status;
+      body.innerText = reason;
+      break;
+    case 'success':
+      resultSection.classList.remove('invalid');
+      resultSection.classList.add('valid');
+
+      const bodyText = urlExists
+        ? `URL exists, returning a ${returnType}!`
+        : "Although valid, this URL doesn't exists.";
+
+      title.innerText = 'Valid URL';
+      body.innerText = bodyText;
+      break;
+    default:
+      resultSection.classList.remove('valid');
+      resultSection.classList.add('invalid');
+      title.innerText = 'Error';
+      body.innerText = 'Something went wrong, please try again!';
+      break;
   }
-
-  resultSection.classList.remove('invalid');
-  resultSection.classList.add('valid');
-
-  const bodyText = urlExists
-    ? `URL exists, returning a ${returnType}!`
-    : "Although valid, this URL doesn't exists.";
-
-  title.innerText = 'Valid URL';
-  body.innerText = bodyText;
+  return;
 };
 
-const debouncedCheck = debouncePromise(checkUrl, 500);
+const debouncedCheck = debouncePromise(mockServerRequest, 500);
 
 const handleInput = async ({ target }) => {
   const { value, validity } = target;
 
   if (!validity.valid) {
-    setResult({ status: 'fail', data: { reason: 'Invalid URL format.' } });
+    setAppStatus({ status: 'fail', data: { reason: 'Invalid URL format.' } });
     return;
   }
 
-  resultSection.classList.add('loading');
-  debouncedCheck(value).then((result) => {
-    resultSection.classList.remove('loading');
-    setResult(result);
-  });
+  setAppStatus({ status: 'loading', data: {} });
+
+  const response = await debouncedCheck(value);
+  console.log('~ Value:', value);
+  console.log('~ handleInput ~ debouncedCheck response:', response);
+  resultSection.classList.remove('loading');
+  setAppStatus(response);
 };
 
 let urlInput = document.getElementById('url-input');
