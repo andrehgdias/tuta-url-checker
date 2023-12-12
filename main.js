@@ -2,7 +2,7 @@ function debouncePromise(callBack, delay = 1000) {
   let timeoutRef;
 
   return (...args) => {
-    console.log(args);
+    console.log('Callback args:', args);
     clearTimeout(timeoutRef);
     return new Promise((resolve) => {
       timeoutRef = setTimeout(async () => {
@@ -42,7 +42,7 @@ function mockServerRequest(url) {
     setTimeout(() => {
       const response = checkUrl(url);
       resolve(response);
-    }, 2500);
+    }, 3500);
   });
 }
 
@@ -62,12 +62,14 @@ const setAppStatus = (result) => {
       body.innerText = '';
       break;
     case 'fail':
+      resultSection.classList.remove('loading');
       resultSection.classList.remove('valid');
       resultSection.classList.add('invalid');
       title.innerText = status;
       body.innerText = reason;
       break;
     case 'success':
+      resultSection.classList.remove('loading');
       resultSection.classList.remove('invalid');
       resultSection.classList.add('valid');
 
@@ -90,19 +92,26 @@ const setAppStatus = (result) => {
 
 const debouncedCheck = debouncePromise(mockServerRequest, 500);
 
+let lastUrlToken = undefined;
 const handleInput = async ({ target }) => {
   const { value, validity } = target;
 
   if (!validity.valid) {
     setAppStatus({ status: 'fail', data: { reason: 'Invalid URL format.' } });
+    lastUrlToken = undefined;
     return;
   }
 
   setAppStatus({ status: 'loading', data: {} });
 
+  const currentToken = Math.random().toString(36).substring(2);
+  lastUrlToken = currentToken;
   const response = await debouncedCheck(value);
-  console.log('~ Value:', value);
-  console.log('~ handleInput ~ debouncedCheck response:', response);
+  if (currentToken !== lastUrlToken) {
+    console.log('Ignore request: ', { currentToken, lastUrlToken });
+    return;
+  }
+  console.log('Done:', { currentToken, lastUrlToken });
   resultSection.classList.remove('loading');
   setAppStatus(response);
 };
